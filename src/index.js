@@ -4,6 +4,9 @@ const fs = require('fs');
 const app = express();
 const port = 3000;
 
+if (!fs.existsSync('data.json')) {
+    fs.writeFileSync('data.json', '{}');
+}
 
 const applyRuleAndGenerateResult = (calculation) => {
     return transaction => {
@@ -195,7 +198,7 @@ function applyWeekendDiscount(transaction) {
 app.post('/:customername/transaction', async (req, res, next) => {
     try {
         const {body: transaction} = req;
-        if(transaction.type.toLowerCase() === 'refund'){
+        if (transaction.type.toLowerCase() === 'refund') {
             transaction.amount = -1 * Math.abs(transaction.amount);
         }
         const {customername: customerName} = req.params;
@@ -231,10 +234,7 @@ app.post('/:customername/transaction', async (req, res, next) => {
 app.get('/:customername/balance', (req, res) => {
     try {
         const {customername: customerName} = req.params;
-        let text = fs.readFileSync('data.json', 'utf8') || '{}';
-        if (!text) {
-            fs.appendFileSync("data.json", text);
-        }
+        const text = fs.readFileSync('data.json', 'utf8', (err) => {}) || '{}';
         const data = JSON.parse(text);
         const result = data[customerName].reduce((acc, current) => {
             return acc + current.amount + current.commission + current.vat;
