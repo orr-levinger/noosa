@@ -5,11 +5,15 @@ const app = express();
 const port = 3000
 
 
+function NikePayNow() {
+    return transaction => {
+        return transaction;
+    };
+}
+
 const orgsToRulesMap = new Map([
     ['NIKE',new Map(
-        [['Paynow', transaction => {
-        return transaction;
-    }],
+        [['Pay now', (NikePayNow())],
     ])]
 ]);
 
