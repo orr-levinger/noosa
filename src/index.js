@@ -11,10 +11,18 @@ function NikePayNow() {
     };
 }
 
+function NikePayNow() {
+    return transaction => {
+        return transaction;
+    };
+}
+
 const orgsToRulesMap = new Map([
     [
-        'Nike', new Map(
-        [['Pay now', (NikePayNow())],
+        'Nike', new Map([
+            ['Pay now', (NikePayNow())],
+            ['Pay with Installments', (NikePayNow())],
+            ['Refund payment', (NikePayNow())],
         ]),
         'H&M', new Map(
         [['Pay with Installments', (NikePayNow())],
