@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-const port = 3000
+const port = 3000;
 
 const addWeekendDiscount = (transaction) =>{
     if(new Date(transaction.date).getDay() > 5){
@@ -10,9 +10,9 @@ const addWeekendDiscount = (transaction) =>{
     }
 }
 
-function refundPayment() {
+function NikeRefundPayment() {
     return transaction => {
-        const toAdd = Math.max(10, transaction.amount/100*4);
+        const toAdd = -1 * transaction.amount;
         return {
             ...transaction,
             total: toAdd
@@ -44,7 +44,7 @@ const orgsToRulesMap = new Map([
         'Nike'.toLowerCase(), new Map([
             ['Pay now'.toLowerCase(), (NikePayNow())],
             ['Pay with Installments'.toLowerCase(), (NikePayWithInstallments())],
-            ['Refund payment'.toLowerCase(), (refundPayment())],
+            ['Refund payment'.toLowerCase(), (NikeRefundPayment())],
         ]),
         'H&M'.toLowerCase(), new Map(
         [['Pay with Installments', (NikePayNow())],
