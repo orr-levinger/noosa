@@ -178,7 +178,7 @@ async function writeToFile(transaction) {
     fs.writeFileSync("data.json", JSON.stringify(data));
 }
 
-function applyWeekedDiscount(transaction) {
+function applyWeekendDiscount(transaction) {
     if (new Date(transaction.date).getDay() > 4) {
         transaction.commission += transaction.amount / 200 * -1;
     }
@@ -203,7 +203,7 @@ app.post('/:customername/transaction', async (req, res, next) => {
             return
         }
         const result = typesToPaymentMethodsMap(transaction);
-        applyWeekedDiscount(transaction);
+        applyWeekendDiscount(transaction);
         result.customerName = customerName;
         result.reportToIRS = result.amount > 2000;
         await writeToFile(result);
