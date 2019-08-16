@@ -5,7 +5,7 @@ const app = express();
 const port = 3000
 
 
-function NikePayNow() {
+function NikePayWithInstallments() {
     return transaction => {
         return transaction;
     };
@@ -25,7 +25,7 @@ const orgsToRulesMap = new Map([
     [
         'Nike'.toLowerCase(), new Map([
             ['Pay now'.toLowerCase(), (NikePayNow())],
-            ['Pay with Installments'.toLowerCase(), (NikePayNow())],
+            ['Pay with Installments'.toLowerCase(), (NikePayWithInstallments())],
             ['Refund payment'.toLowerCase(), (NikePayNow())],
         ]),
         'H&M'.toLowerCase(), new Map(
@@ -36,6 +36,7 @@ const orgsToRulesMap = new Map([
         ]),
     ]
 ]);
+
 
 
 app.use(bodyParser.json());
