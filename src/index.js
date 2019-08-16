@@ -7,7 +7,7 @@ const port = 3000;
 
 const applyRuleAndGenerateResult = (calculation) => {
     return transaction => {
-        const {total, commission, vat} = calculation(transaction);
+        const {commission, vat} = calculation(transaction);
         return {
             ...transaction,
             commission,
@@ -59,7 +59,6 @@ function smallPartnersRefundPayment() {
         }
     })
 }
-
 
 
 function NikePayWithInstallments() {
@@ -121,6 +120,7 @@ function OlivePayWithInstallments() {
         }
     });
 }
+
 function smallPartnersRefund() {
     return applyRuleAndGenerateResult(transaction => {
         return {
@@ -136,25 +136,33 @@ let smallPartnersMap = new Map([
     ['Pay with Installments'.toLowerCase(), (smallPartnersPayWithInstallments())],
     ['Refund'.toLowerCase(), (smallPartnersRefund())],
 ]);
-const emptyResult = { commission:0, vat: 0};
+const emptyResult = () => {
+    return (transaction) => {
+        return {
+            ...transaction,
+            commission: 0,
+            vat: 0
+        }
+    }
+}
 const orgsToRulesMap = new Map([
     [
         'Nike'.toLowerCase(), new Map([
         ['Pay now'.toLowerCase(), (NikePayNow())],
         ['Pay with Installments'.toLowerCase(), (NikePayWithInstallments())],
-        ['Refund'.toLowerCase(), () => emptyResult],
+        ['Refund'.toLowerCase(), emptyResult()],
     ]),
         'H&M'.toLowerCase(), new Map(
         [
             ['Pay now', (HNMPayNow())],
             ['Pay with Installments', (HNMPayWithInstallments())],
-            ['Refund', () => emptyResult],
+            ['Refund', emptyResult()],
         ]),
         'Olive'.toLowerCase(), new Map(
         [
             ['Pay now', (OlivePayNow())],
             ['Pay with Installments', (OlivePayWithInstallments())],
-            ['Refund', () => emptyResult],
+            ['Refund', () => emptyResult()],
         ]),
         'David bigud'.toLowerCase(), smallPartnersMap,
         'Moshe halbasha'.toLowerCase(), smallPartnersMap,
@@ -187,6 +195,9 @@ function applyWeekendDiscount(transaction) {
 app.post('/:customername/transaction', async (req, res, next) => {
     try {
         const {body: transaction} = req;
+        if(transaction.type.toLowerCase() === 'refund'){
+            transaction.amount = -1 * Math.abs(transaction.amount);
+        }
         const {customername: customerName} = req.params;
         let orgToTransactiosTypesMap = orgsToRulesMap.get(customerName.toLowerCase());
         if (!orgToTransactiosTypesMap) {
