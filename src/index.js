@@ -12,9 +12,14 @@ function NikePayNow() {
 }
 
 const orgsToRulesMap = new Map([
-    ['NIKE',new Map(
+    [
+        'Nike', new Map(
         [['Pay now', (NikePayNow())],
-    ])]
+        ]),
+        'H&M', new Map(
+        [['Pay now', (NikePayNow())],
+        ]),
+    ]
 ]);
 
 
