@@ -17,7 +17,10 @@ const orgsToRulesMap = new Map([
         [['Pay now', (NikePayNow())],
         ]),
         'H&M', new Map(
-        [['Pay now', (NikePayNow())],
+        [['Pay with Installments', (NikePayNow())],
+        ]),
+        'H&M', new Map(
+        [['Refund payment', (NikePayNow())],
         ]),
     ]
 ]);
