@@ -4,10 +4,28 @@ const fs = require('fs');
 const app = express();
 const port = 3000
 
+const addWeekendDiscount = (transaction) =>{
+    if(new Date(transaction.date).getDay() > 5){
+        return transaction.amount/200*-1;
+    }
+}
 
+function refundPayment() {
+    return transaction => {
+        const toAdd = Math.max(10, transaction.amount/100*4);
+        return {
+            ...transaction,
+            total: toAdd
+        };
+    };
+}
 function NikePayWithInstallments() {
     return transaction => {
-        return transaction;
+        const toAdd = Math.max(10, transaction.amount/100*4);
+        return {
+            ...transaction,
+            total: toAdd
+        };
     };
 }
 
@@ -26,7 +44,7 @@ const orgsToRulesMap = new Map([
         'Nike'.toLowerCase(), new Map([
             ['Pay now'.toLowerCase(), (NikePayNow())],
             ['Pay with Installments'.toLowerCase(), (NikePayWithInstallments())],
-            ['Refund payment'.toLowerCase(), (NikePayNow())],
+            ['Refund payment'.toLowerCase(), (refundPayment())],
         ]),
         'H&M'.toLowerCase(), new Map(
         [['Pay with Installments', (NikePayNow())],
@@ -59,6 +77,9 @@ app.post('/:customername/transaction', async (req, res, next) => {
             return
         }
         const result = typesToPaymentMethodsMap(transaction);
+        let weekendDiscount = addWeekendDiscount(transaction);
+        result.total += weekendDiscount;
+        result.weekendDiscount = weekendDiscount;
         await fs.writeFile("test.json", JSON.stringify(req.body), function (err) {
             if (err) {
                 res.status(404).json({
